@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Therian Hub</title>
+<style>
+body {
+  background: #0b0b0b;
+  color: white;
+  font-family: Arial;
+  text-align: center;
+}
+
+input, textarea {
+  padding: 8px;
+  margin: 5px;
+  width: 80%;
+  max-width: 300px;
+}
+
+button {
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+.card {
+  background: #1f1f1f;
+  margin: 10px auto;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 350px;
+}
+
+img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🐾 Therian Hub</h1>
+
+<div id="form">
+  <input id="name" placeholder="Therian namn"><br>
+  <input id="type" placeholder="Theriotype (ulv, rev osv)"><br>
+  <input id="img" placeholder="Profilbilde URL"><br>
+  <button onclick="join()">Bli medlem</button>
+</div>
+
+<div id="main" style="display:none">
+
+  <h2>💬 Lokal chat</h2>
+  <textarea id="msg" placeholder="Skriv noko..."></textarea><br>
+  <button onclick="send()">Send</button>
+
+  <div id="chat"></div>
+
+  <h2>👥 Members</h2>
+  <div id="members"></div>
+
+</div>
+
+<script>
+let members = JSON.parse(localStorage.getItem("members")) || [];
+let chat = JSON.parse(localStorage.getItem("chat")) || [];
+
+function join() {
+  let name = document.getElementById("name").value;
+  let type = document.getElementById("type").value;
+  let img = document.getElementById("img").value || "";
+
+  if(!name || !type) return alert("Fyll inn alt!");
+
+  members.push({ name, type, img });
+  localStorage.setItem("members", JSON.stringify(members));
+
+  document.getElementById("form").style.display = "none";
+  document.getElementById("main").style.display = "block";
+
+  render();
+}
+
+function send() {
+  let msg = document.getElementById("msg").value;
+  if(!msg) return;
+
+  chat.push(msg);
+  localStorage.setItem("chat", JSON.stringify(chat));
+
+  document.getElementById("msg").value = "";
+  render();
+}
+
+function render() {
+  let m = document.getElementById("members");
+  let c = document.getElementById("chat");
+
+  m.innerHTML = "";
+  c.innerHTML = "";
+
+  members.forEach(u => {
+    m.innerHTML += `
+      <div class="card">
+        ${u.img ? `<img src="${u.img}">` : ""}<br>
+        <b>${u.name}</b><br>
+        ${u.type}
+      </div>
+    `;
+  });
+
+  chat.forEach(t => {
+    c.innerHTML += `<div class="card">${t}</div>`;
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>
